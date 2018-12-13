@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+/build/
+/coverage/
+*.snap
+/__snapshots__/
+.idea/
+npm-debug.loggit 
+npm-debug.log
+.vscode/
+.history

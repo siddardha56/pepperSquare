@@ -1,0 +1,34 @@
+.container {
+  height: 100vh;
+  display: flex;
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    background: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .body {
+    margin-top: 50px;
+    height: calc(100% - 100px);
+    width: 100%;
+    overflow: auto;
+  }
+  footer {
+    position: fixed;
+    display: flex;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    align-items: center;
+    justify-content: space-around;
+    .active {
+      color: #90c4ff;
+    }
+  }
+}
