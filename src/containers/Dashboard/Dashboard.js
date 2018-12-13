@@ -7,7 +7,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import styles from './dashboard.scss';
-import getArticlesApi from './dashboardApi';
+import {
+  getArticlesApi,
+  createArticleApi,
+} from './dashboardApi';
 import Articles from '../../components/Articles';
 import CreateArticle from '../../components/Create';
 
@@ -24,7 +27,7 @@ class Dashboard extends React.PureComponent {
     });
   }
   render() {
-    const { articles, fetchArticles } = this.props;
+    const { articles, fetchArticles, createArticle } = this.props;
     const { title } = this.state;
     return (
       <div className={styles.container}>
@@ -51,7 +54,11 @@ class Dashboard extends React.PureComponent {
             <Route
               path="/create"
               exact
-              render={() => <CreateArticle />}
+              render={routeParams =>
+                (<CreateArticle
+                  {...routeParams}
+                  createArticle={createArticle}
+                />)}
             />
             <Route path="/404" render={() => <h1>Page not found</h1>} />
           </Switch>
@@ -70,6 +77,7 @@ Dashboard.propTypes = {
   articles: PropTypes.instanceOf(Array).isRequired,
   history: PropTypes.object.isRequired,
   fetchArticles: PropTypes.func.isRequired,
+  createArticle: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ DashboardReducer }) => ({
@@ -79,6 +87,7 @@ const mapStateToProps = ({ DashboardReducer }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
     fetchArticles: getArticlesApi,
+    createArticle: createArticleApi,
   }, dispatch);
 
 

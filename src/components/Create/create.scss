@@ -1,0 +1,26 @@
+.container {
+  background: #fff;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    .input {
+      font-size: 16px;
+      border: 2px solid #a4a3a5;
+      margin: 15px;
+      border-radius: 7px;
+      padding: 15px;
+      outline: 0;
+      resize: none;
+    }
+    .inputButton {
+      font-weight: bold;
+      border: 2px solid #6e9fff;
+      color: #6e9fff;
+      cursor: pointer;
+    }
+  }
+}
