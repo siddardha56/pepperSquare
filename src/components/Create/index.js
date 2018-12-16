@@ -52,7 +52,6 @@ class CreateArticle extends React.Component {
             type="text"
             placeholder="Title"
             value={title}
-            className={styles.input}
             onChange={this.updateValues('title')}
           />
           <textarea
@@ -67,26 +66,22 @@ class CreateArticle extends React.Component {
             type="text"
             value={tags}
             placeholder="Category/Tags"
-            className={styles.input}
             onChange={this.updateValues('tags')}
           />
           <Input
             type="text"
             value={author}
             placeholder="Author"
-            className={styles.input}
             onChange={this.updateValues('author')}
           />
           <Input
             type="text"
             value={image}
             placeholder="Image URL only"
-            className={styles.input}
             onChange={this.updateValues('image')}
           />
           <Input
             type="button"
-            className={`${styles.inputButton} ${styles.input}`}
             value="PUBLISH"
             onClick={this.submit}
           />

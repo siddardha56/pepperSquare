@@ -6,7 +6,9 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import Images from '../../Images';
 import styles from './dashboard.scss';
+import Input from '../../common/Input';
 import {
   getArticlesApi,
   createArticleApi,
@@ -19,22 +21,98 @@ class Dashboard extends React.PureComponent {
     super();
     this.state = {
       title: 'Home',
+      id: '',
+      author: '',
+      published: '',
     };
   }
+  componentDidMount() {
+    const { fetchArticles } = this.props;
+    fetchArticles();
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { location } = this.props;
+    if (location.pathname !== newProps.location.pathname) {
+      this.body.scrollTop = 0;
+      this.setState({
+        id: '',
+        author: '',
+        published: '',
+      });
+    }
+  }
+
+  updateFilterValues = filter => ({ target }) => {
+    this.setState({
+      [filter]: filter === 'published' ? target.checked : target.value,
+    });
+  }
+
+  filterArticles = () => {
+    const { fetchArticles } = this.props;
+    const { id, author, published } = this.state;
+    fetchArticles({ id, author, published });
+  }
+
   changeTitle = title => () => {
     this.setState({
       title,
     });
   }
+
+  loadArticle = id => () => {
+    const { history } = this.props;
+    history.push(`/article/${id}`);
+  }
+
   render() {
-    const { articles, fetchArticles, createArticle } = this.props;
-    const { title } = this.state;
+    const {
+      articles,
+      location,
+      createArticle,
+      fetchArticles,
+    } = this.props;
+    const {
+      id,
+      author,
+      published,
+      title,
+    } = this.state;
     return (
       <div className={styles.container}>
         <header>
           {title}
         </header>
-        <div className={styles.body}>
+        <div ref={(ref) => { this.body = ref; }} className={styles.body}>
+          {location.pathname !== '/create' &&
+          <div className={styles.filterContainer}>
+            <Input
+              type="text"
+              placeholder="Id"
+              value={id}
+              className={styles.input}
+              onChange={this.updateFilterValues('id')}
+            />
+            <Input
+              type="text"
+              placeholder="Author"
+              value={author}
+              className={styles.input}
+              onChange={this.updateFilterValues('author')}
+            />
+            <Input
+              type="checkbox"
+              checked={published}
+              className={styles.input}
+              onChange={this.updateFilterValues('published')}
+            /> <span>Published</span>
+            <Input
+              type="button"
+              value="Filter"
+              onClick={this.filterArticles}
+            />
+          </div>}
           <Switch>
             <Route
               path="/"
@@ -43,13 +121,20 @@ class Dashboard extends React.PureComponent {
                 (<Articles
                   {...routeParams}
                   articles={articles}
-                  fetchArticles={fetchArticles}
+                  loadArticle={this.loadArticle}
+                  filterArticles={fetchArticles}
                 />)}
             />
             <Route
-              path="/fav"
+              path="/popular"
               exact
-              render={() => <div>Fav</div>}
+              render={routeParams =>
+                (<Articles
+                  {...routeParams}
+                  loadArticle={this.loadArticle}
+                  filterArticles={fetchArticles}
+                  articles={[...articles].sort((a, b) => (b.likes - a.likes))}
+                />)}
             />
             <Route
               path="/create"
@@ -60,13 +145,18 @@ class Dashboard extends React.PureComponent {
                   createArticle={createArticle}
                 />)}
             />
-            <Route path="/404" render={() => <h1>Page not found</h1>} />
           </Switch>
         </div>
         <footer>
-          <NavLink exact to="/" onClick={this.changeTitle('Home')} activeClassName={styles.active}>Home</NavLink>
-          <NavLink to="/fav" onClick={this.changeTitle('Popular')} activeClassName={styles.active}>Fav</NavLink>
-          <NavLink to="/create" onClick={this.changeTitle('Create')} activeClassName={styles.active}>Create</NavLink>
+          <NavLink exact to="/" onClick={this.changeTitle('Home')} activeClassName={styles.active}>
+            <img src={Images.HOME} width="24px" alt="" />
+          </NavLink>
+          <NavLink to="/popular" onClick={this.changeTitle('Most Popular')} activeClassName={styles.active}>
+            <img src={Images.BLACK_HEART} width="24px" alt="" />
+          </NavLink>
+          <NavLink to="/create" onClick={this.changeTitle('Create')} activeClassName={styles.active}>
+            <img src={Images.ADD} width="24px" alt="" />
+          </NavLink>
         </footer>
       </div>
     );
@@ -76,6 +166,7 @@ class Dashboard extends React.PureComponent {
 Dashboard.propTypes = {
   articles: PropTypes.instanceOf(Array).isRequired,
   history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   fetchArticles: PropTypes.func.isRequired,
   createArticle: PropTypes.func.isRequired,
 };
